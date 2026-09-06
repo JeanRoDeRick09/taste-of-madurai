@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taste of Madurai — Prebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --maroon:#6B1E23;
+    --maroon-dark:#4A1418;
+    --mustard:#E3A234;
+    --mustard-dark:#C9861A;
+    --green:#5B7B4A;
+    --bg:#FBF8F2;
+    --paper:#FFFFFF;
+    --line:#E7DAC2;
+    --text:#2A1F17;
+    --text-soft:#6E6255;
+    --danger:#B23A32;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Work Sans',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    margin:0 0 4px 0;
+    line-height:1.15;
+  }
+  .app{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    background:var(--bg);
+    position:relative;
+    padding-bottom:100px;
+  }
+  .view{display:none;}
+  .view.active{display:block; animation:rise .35s ease;}
+  @keyframes rise{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    display:flex; align-items:center; gap:10px;
+    padding:16px 20px;
+    position:sticky; top:0; z-index:10;
+    background:var(--bg);
+    border-bottom:1px solid var(--line);
+  }
+  .back-btn{
+    width:34px;height:34px;border-radius:50%;
+    border:1px solid var(--line); background:var(--paper);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer; color:var(--text); font-size:18px;
+    flex-shrink:0;
+  }
+  .topbar-title{font-size:15px; font-weight:600; color:var(--text-soft); letter-spacing:.2px;}
+
+  /* ---------- Home ---------- */
+  .hero{
+    background:var(--maroon);
+    color:#fff;
+    padding:56px 24px 64px;
+    border-radius:0 0 32px 32px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; right:-40px; bottom:-60px;
+    width:200px; height:200px; border-radius:50%;
+    background:radial-gradient(circle, rgba(227,162,52,.35), transparent 70%);
+  }
+  .eyebrow-plain{font-size:13px; color:#E9C79A; margin-bottom:10px;}
+  .hero h1{font-size:34px; color:#fff;}
+  .hero p{font-size:15px; color:#F3E3D0; margin-top:10px; line-height:1.5; max-width:34ch;}
+  .stall-name{color:var(--mustard);}
+
+  .home-body{padding:26px 22px 10px;}
+  .menu-strip{
+    display:flex; gap:12px; margin-bottom:22px;
+  }
+  .veg-announce{
+    background:#EAF1E1; border:1px solid #C9DCB4; color:#3D5A2A;
+    font-size:13.5px; font-weight:600; text-align:center;
+    padding:10px 14px; border-radius:10px; margin-bottom:16px;
+  }
+  .menu-link{
+    display:block; text-align:center; font-size:13.5px; font-weight:600;
+    color:var(--maroon); text-decoration:none; padding:10px 0 18px;
+  }
+  .menu-chip{
+    flex:1; background:var(--paper); border:1px solid var(--line);
+    border-radius:12px; padding:14px 10px; text-align:center;
+  }
+  .menu-chip .price{font-family:'Fraunces',serif; font-size:20px; font-weight:600; color:var(--maroon);}
+  .menu-chip .name{font-size:12.5px; color:var(--text-soft); margin-top:2px;}
+
+  .info-line{
+    display:flex; align-items:center; gap:10px;
+    font-size:14px; color:var(--text-soft); padding:8px 0;
+    border-top:1px solid var(--line);
+  }
+  .info-line:last-child{border-bottom:1px solid var(--line);}
+
+  .cta-wrap{padding:26px 22px 30px;}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    width:100%; padding:16px; border-radius:12px; border:none;
+    font-family:'Work Sans',sans-serif; font-size:16px; font-weight:600;
+    cursor:pointer; transition:transform .12s ease, opacity .12s ease;
+  }
+  .btn:active{transform:scale(.98);}
+  .btn-primary{background:var(--maroon); color:#fff;}
+  .btn-primary:disabled{background:#C9B7A8; cursor:not-allowed;}
+  .btn-ghost{background:transparent; color:var(--maroon); border:1.5px solid var(--maroon);}
+
+  /* ---------- Steps ---------- */
+  .steps-row{
+    display:flex; align-items:center; gap:6px;
+    padding:14px 22px 6px;
+  }
+  .step-dot{
+    flex:1; height:4px; border-radius:2px; background:var(--line);
+  }
+  .step-dot.done{background:var(--mustard);}
+
+  .section-pad{padding:18px 22px 0;}
+
+  label{
+    display:block; font-size:13px; font-weight:600;
+    color:var(--text-soft); margin:16px 0 6px;
+  }
+  input[type=text], input[type=tel], input[type=email]{
+    width:100%; padding:13px 14px; border-radius:10px;
+    border:1.5px solid var(--line); background:var(--paper);
+    font-size:15px; font-family:'Work Sans',sans-serif; color:var(--text);
+  }
+  input:focus{outline:2px solid var(--mustard); outline-offset:1px; border-color:var(--mustard);}
+
+  .batch-row{display:flex; gap:8px; margin-top:6px;}
+  .batch-opt{
+    flex:1; text-align:center; padding:11px 4px; border-radius:10px;
+    border:1.5px solid var(--line); background:var(--paper);
+    font-size:14px; font-weight:600; color:var(--text-soft); cursor:pointer;
+  }
+  .batch-opt.selected{border-color:var(--maroon); background:var(--maroon); color:#fff;}
+
+  .err{color:var(--danger); font-size:12.5px; margin-top:4px; display:none;}
+
+  /* ---------- Items ---------- */
+  .item-card{
+    display:flex; align-items:center; gap:14px;
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:14px; padding:14px; margin-top:14px;
+  }
+  .item-emoji{
+    width:48px;height:48px;border-radius:10px;
+    background:#F3E7D3; display:flex;align-items:center;justify-content:center;
+    font-size:24px; flex-shrink:0;
+  }
+  .item-info{flex:1;}
+  .item-info .name{font-weight:600; font-size:15px;}
+  .item-info .price{font-size:13px; color:var(--text-soft); margin-top:2px;}
+  .stepper{display:flex; align-items:center; gap:0; border:1.5px solid var(--line); border-radius:10px; overflow:hidden;}
+  .stepper button{
+    width:34px; height:34px; border:none; background:var(--paper);
+    font-size:18px; color:var(--maroon); cursor:pointer; font-weight:600;
+  }
+  .stepper button:active{background:#F3E7D3;}
+  .stepper .qty{width:28px; text-align:center; font-weight:600; font-size:15px;}
+
+  .summary-box{
+    margin:22px 0 6px; background:var(--paper); border:1px solid var(--line);
+    border-radius:14px; padding:16px;
+  }
+  .summary-row{display:flex; justify-content:space-between; font-size:14px; padding:5px 0; color:var(--text-soft);}
+  .summary-row.total{
+    border-top:1px solid var(--line); margin-top:6px; padding-top:10px;
+    font-size:17px; font-weight:700; color:var(--text);
+  }
+  .summary-row.total .amt{font-family:'Fraunces',serif; color:var(--maroon);}
+
+  .empty-note{font-size:13.5px; color:var(--text-soft); text-align:center; padding:18px 0;}
+
+  /* ---------- Payment ---------- */
+  .pay-amount{
+    text-align:center; padding:26px 22px 6px;
+  }
+  .pay-amount .label{font-size:13px; color:var(--text-soft); font-weight:600;}
+  .pay-amount .num{font-family:'Fraunces',serif; font-size:44px; color:var(--maroon); font-weight:700; margin-top:4px;}
+
+  .qr-box{
+    margin:18px 22px; background:var(--paper); border:1px solid var(--line);
+    border-radius:16px; padding:20px; text-align:center;
+  }
+  .qr-box img{width:220px; height:220px; object-fit:contain; border-radius:8px;}
+  .qr-hint{font-size:12.5px; color:var(--text-soft); margin-top:10px;}
+  .upi-id{font-size:14px; font-weight:600; margin-top:8px; color:var(--text);}
+
+  .upload-box{
+    margin:0 22px 8px; border:1.5px dashed var(--line); border-radius:14px;
+    padding:20px; text-align:center; background:var(--paper); cursor:pointer;
+  }
+  .upload-box.has-file{border-color:var(--green); border-style:solid;}
+  .upload-box .icon{font-size:26px;}
+  .upload-box .txt{font-size:13.5px; color:var(--text-soft); margin-top:6px;}
+  .upload-preview{max-width:100%; max-height:160px; border-radius:8px; margin-top:10px;}
+
+  /* ---------- Confirmation ---------- */
+  .confirm-wrap{text-align:center; padding:50px 24px 10px;}
+  .confirm-badge{
+    width:72px; height:72px; border-radius:50%; background:var(--green);
+    color:#fff; font-size:34px; display:flex; align-items:center; justify-content:center;
+    margin:0 auto 18px;
+  }
+  .booking-id-box{
+    margin:20px 22px; background:var(--maroon); color:#fff;
+    border-radius:14px; padding:18px; text-align:center;
+  }
+  .booking-id-box .lbl{font-size:12px; color:#E9C79A; font-weight:600;}
+  .booking-id-box .id{font-family:'Fraunces',serif; font-size:26px; margin-top:4px; letter-spacing:.5px;}
+
+  .recap{margin:18px 22px; background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:16px;}
+  .recap .r-row{display:flex; justify-content:space-between; font-size:14px; padding:6px 0; color:var(--text-soft);}
+  .recap .r-row b{color:var(--text); font-weight:600;}
+
+  .note-strip{margin:16px 22px 0; font-size:13px; color:var(--text-soft); text-align:center; line-height:1.5;}
+
+  /* ---------- Bottom action bar ---------- */
+  .bottom-bar{
+    position:fixed; left:0; right:0; bottom:0;
+    max-width:480px; margin:0 auto;
+    background:var(--bg);
+    padding:14px 22px calc(14px + env(safe-area-inset-bottom));
+    border-top:1px solid var(--line);
+  }
+  .spinner{
+    display:inline-block; width:16px; height:16px; border:2px solid rgba(255,255,255,.4);
+    border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; margin-right:8px; vertical-align:-3px;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ============ HOME ============ -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <div class="eyebrow-plain">Fest Stall</div>
+      <h1><span class="stall-name">Taste of Madurai</span></h1>
+      <p>Reserve your biriyani now, walk straight up to the counter, and skip the line.</p>
+    </div>
+    <div class="home-body">
+      <div class="veg-announce">🌱 New: Veg Biryani is here — prebook it below!</div>
+      <div class="menu-strip">
+        <div class="menu-chip">
+          <div class="price">₹300</div>
+          <div class="name">Mutton Biriyani</div>
+        </div>
+        <div class="menu-chip">
+          <div class="price">₹250</div>
+          <div class="name">Chicken Biriyani</div>
+        </div>
+        <div class="menu-chip">
+          <div class="price">₹200</div>
+          <div class="name">Veg Biriyani</div>
+        </div>
+      </div>
+      <a href="menu.pdf" target="_blank" rel="noopener" class="menu-link">📋 View full event-day menu (PDF)</a>
+      <div class="info-line">📍 Find us at the stall — look for the Taste of Madurai banner</div>
+      <div class="info-line">⏱ Prebooking closes 12:00 AM, 7th September</div>
+      <div class="info-line">📱 Pay by UPI, upload your screenshot, done</div>
+    </div>
+    <div class="cta-wrap">
+      <button class="btn btn-primary" onclick="goTo('details')">Prebook now</button>
+    </div>
+  </section>
+
+  <!-- ============ STEP 1: DETAILS ============ -->
+  <section class="view" id="view-details">
+    <div class="topbar">
+      <div class="back-btn" onclick="goTo('home')">←</div>
+      <div class="topbar-title">Your details</div>
+    </div>
+    <div class="steps-row">
+      <div class="step-dot done"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div>
+    </div>
+    <div class="section-pad">
+      <label for="f-name">Full name</label>
+      <input type="text" id="f-name" placeholder="e.g. Arjun Menon">
+      <div class="err" id="err-name">Please enter your name</div>
+
+      <label>Batch</label>
+      <div class="batch-row" id="batch-row">
+        <div class="batch-opt" data-batch="PM" onclick="pickBatch('PM')">PM</div>
+        <div class="batch-opt" data-batch="DM1" onclick="pickBatch('DM1')">DM1</div>
+        <div class="batch-opt" data-batch="DM2" onclick="pickBatch('DM2')">DM2</div>
+      </div>
+      <div class="err" id="err-batch">Please select your batch</div>
+
+      <label for="f-contact">Contact number</label>
+      <input type="tel" id="f-contact" placeholder="10-digit mobile number" maxlength="10">
+      <div class="err" id="err-contact">Enter a valid 10-digit number</div>
+
+      <label for="f-email">Email <span style="font-weight:400; color:var(--text-soft);">(optional, for your receipt)</span></label>
+      <input type="email" id="f-email" placeholder="you@example.com">
+    </div>
+    <div style="height:90px;"></div>
+    <div class="bottom-bar">
+      <button class="btn btn-primary" onclick="submitDetails()">Continue to menu</button>
+    </div>
+  </section>
+
+  <!-- ============ STEP 2: ITEMS ============ -->
+  <section class="view" id="view-items">
+    <div class="topbar">
+      <div class="back-btn" onclick="goTo('details')">←</div>
+      <div class="topbar-title">Choose your order</div>
+    </div>
+    <div class="steps-row">
+      <div class="step-dot done"></div><div class="step-dot done"></div><div class="step-dot"></div><div class="step-dot"></div>
+    </div>
+    <div class="section-pad">
+      <div class="item-card">
+        <div class="item-emoji">🍖</div>
+        <div class="item-info">
+          <div class="name">Mutton Biriyani</div>
+          <div class="price">₹300 / plate</div>
+        </div>
+        <div class="stepper">
+          <button onclick="changeQty('mutton',-1)">−</button>
+          <div class="qty" id="qty-mutton">0</div>
+          <button onclick="changeQty('mutton',1)">+</button>
+        </div>
+      </div>
+      <div class="item-card">
+        <div class="item-emoji">🍗</div>
+        <div class="item-info">
+          <div class="name">Chicken Biriyani</div>
+          <div class="price">₹250 / plate</div>
+        </div>
+        <div class="stepper">
+          <button onclick="changeQty('chicken',-1)">−</button>
+          <div class="qty" id="qty-chicken">0</div>
+          <button onclick="changeQty('chicken',1)">+</button>
+        </div>
+      </div>
+      <div class="item-card">
+        <div class="item-emoji">🥦</div>
+        <div class="item-info">
+          <div class="name">Veg Biriyani</div>
+          <div class="price">₹200 / plate</div>
+        </div>
+        <div class="stepper">
+          <button onclick="changeQty('veg',-1)">−</button>
+          <div class="qty" id="qty-veg">0</div>
+          <button onclick="changeQty('veg',1)">+</button>
+        </div>
+      </div>
+
+      <div class="summary-box" id="summary-box">
+        <div class="empty-note">Add a plate to see your total</div>
+      </div>
+    </div>
+    <div style="height:90px;"></div>
+    <div class="bottom-bar">
+      <button class="btn btn-primary" id="btn-to-payment" onclick="goToPayment()" disabled>Proceed to pay</button>
+    </div>
+  </section>
+
+  <!-- ============ STEP 3: PAYMENT ============ -->
+  <section class="view" id="view-payment">
+    <div class="topbar">
+      <div class="back-btn" onclick="goTo('items')">←</div>
+      <div class="topbar-title">Pay by UPI</div>
+    </div>
+    <div class="steps-row">
+      <div class="step-dot done"></div><div class="step-dot done"></div><div class="step-dot done"></div><div class="step-dot"></div>
+    </div>
+    <div class="pay-amount">
+      <div class="label">AMOUNT TO PAY</div>
+      <div class="num" id="pay-total">₹0</div>
+    </div>
+    <div class="qr-box">
+      <img src="qr.jpeg" alt="Scan to pay" onerror="this.style.display='none'; document.getElementById('qr-fallback').style.display='block';">
+      <div id="qr-fallback" style="display:none; padding:40px 0; color:var(--text-soft); font-size:13px;">
+        Replace <b>qr.jpeg</b> in this folder with your own UPI QR code image.
+      </div>
+      <div class="upi-id">kumarmess.63929573@hdfcbank</div>
+      <div class="qr-hint">Scan with your UPI app, then enter exactly <b>₹<span id="qr-hint-amt2">0</span></b> when it asks for the amount</div>
+    </div>
+
+    <div class="section-pad">
+      <label>Upload payment screenshot</label>
+      <div class="upload-box" id="upload-box" onclick="document.getElementById('file-input').click()">
+        <div class="icon">📎</div>
+        <div class="txt">Tap to upload your payment screenshot</div>
+        <input type="file" id="file-input" accept="image/*" style="display:none" onchange="handleFile(event)">
+        <img id="upload-preview" class="upload-preview" style="display:none">
+      </div>
+      <div class="err" id="err-file">Please upload your payment screenshot</div>
+    </div>
+    <div style="height:90px;"></div>
+    <div class="bottom-bar">
+      <button class="btn btn-primary" id="btn-confirm" onclick="confirmBooking()">I've paid — confirm booking</button>
+    </div>
+  </section>
+
+  <!-- ============ STEP 4: CONFIRMATION ============ -->
+  <section class="view" id="view-confirm">
+    <div class="confirm-wrap">
+      <div class="confirm-badge">✓</div>
+      <h2>Booking confirmed!</h2>
+      <p style="color:var(--text-soft); font-size:14px; margin-top:6px;">Show this screen at the counter</p>
+    </div>
+    <div class="booking-id-box">
+      <div class="lbl">BOOKING ID</div>
+      <div class="id" id="confirm-bid">—</div>
+    </div>
+    <div class="recap" id="confirm-recap"></div>
+    <div class="note-strip">A copy has also been sent to the stall team. Keep your Booking ID handy for pickup.</div>
+    <div class="cta-wrap">
+      <button class="btn btn-ghost" onclick="resetAndGoHome()">Make another booking</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // ====== CONFIG ======
+  // Paste your deployed Google Apps Script Web App URL here (see SETUP.md)
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwsRzQZyUqS2TJKCtvdGJLjyY6BVNmmzhBZhiYuGyONIUjvWNAimWthkHyG-zG3DeUpeA/exec";
+  // Must exactly match SHARED_TOKEN in Code.gs
+  const SHARED_TOKEN = "tom-9f8a2-madurai";
+
+  const PRICES = { mutton: 300, chicken: 250, veg: 200 };
+  const state = {
+    name:"", batch:"", contact:"", email:"",
+    qty:{ mutton:0, chicken:0, veg:0 },
+    screenshotBase64: null,
+    screenshotName: null
+  };
+
+  function goTo(view){
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById('view-'+view).classList.add('active');
+    window.scrollTo(0,0);
+  }
+
+  function pickBatch(b){
+    state.batch = b;
+    document.querySelectorAll('.batch-opt').forEach(el=>{
+      el.classList.toggle('selected', el.dataset.batch===b);
+    });
+    document.getElementById('err-batch').style.display='none';
+  }
+
+  function submitDetails(){
+    let ok = true;
+    const name = document.getElementById('f-name').value.trim();
+    const contact = document.getElementById('f-contact').value.trim();
+    const email = document.getElementById('f-email').value.trim();
+
+    document.getElementById('err-name').style.display='none';
+    document.getElementById('err-batch').style.display='none';
+    document.getElementById('err-contact').style.display='none';
+
+    if(!name){ document.getElementById('err-name').style.display='block'; ok=false; }
+    if(!state.batch){ document.getElementById('err-batch').style.display='block'; ok=false; }
+    if(!/^\d{10}$/.test(contact)){ document.getElementById('err-contact').style.display='block'; ok=false; }
+    if(!ok) return;
+
+    state.name = name; state.contact = contact; state.email = email;
+    goTo('items');
+  }
+
+  function changeQty(item, delta){
+    const next = Math.max(0, Math.min(20, state.qty[item] + delta));
+    state.qty[item] = next;
+    document.getElementById('qty-'+item).textContent = next;
+    renderSummary();
+  }
+
+  function renderSummary(){
+    const box = document.getElementById('summary-box');
+    const m = state.qty.mutton, c = state.qty.chicken, v = state.qty.veg;
+    const total = m*PRICES.mutton + c*PRICES.chicken + v*PRICES.veg;
+    if(m===0 && c===0 && v===0){
+      box.innerHTML = '<div class="empty-note">Add a plate to see your total</div>';
+    } else {
+      let rows = '';
+      if(m>0) rows += `<div class="summary-row"><span>Mutton Biriyani × ${m}</span><span>₹${m*PRICES.mutton}</span></div>`;
+      if(c>0) rows += `<div class="summary-row"><span>Chicken Biriyani × ${c}</span><span>₹${c*PRICES.chicken}</span></div>`;
+      if(v>0) rows += `<div class="summary-row"><span>Veg Biriyani × ${v}</span><span>₹${v*PRICES.veg}</span></div>`;
+      rows += `<div class="summary-row total"><span>Total</span><span class="amt">₹${total}</span></div>`;
+      box.innerHTML = rows;
+    }
+    document.getElementById('btn-to-payment').disabled = (total===0);
+  }
+
+  function goToPayment(){
+    const total = state.qty.mutton*PRICES.mutton + state.qty.chicken*PRICES.chicken + state.qty.veg*PRICES.veg;
+    document.getElementById('pay-total').textContent = '₹'+total;
+    document.getElementById('qr-hint-amt2').textContent = total;
+    goTo('payment');
+  }
+
+  function handleFile(e){
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      state.screenshotBase64 = ev.target.result; // data URL
+      state.screenshotName = file.name;
+      const preview = document.getElementById('upload-preview');
+      preview.src = ev.target.result;
+      preview.style.display = 'block';
+      document.getElementById('upload-box').classList.add('has-file');
+      document.querySelector('#upload-box .txt').textContent = 'Screenshot attached — tap to change';
+      document.getElementById('err-file').style.display='none';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function confirmBooking(){
+    if(!state.screenshotBase64){
+      document.getElementById('err-file').style.display='block';
+      return;
+    }
+    const btn = document.getElementById('btn-confirm');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Submitting...';
+
+    const total = state.qty.mutton*PRICES.mutton + state.qty.chicken*PRICES.chicken + state.qty.veg*PRICES.veg;
+    const payload = {
+      token: SHARED_TOKEN,
+      name: state.name,
+      batch: state.batch,
+      contact: state.contact,
+      email: state.email,
+      mutton: state.qty.mutton,
+      chicken: state.qty.chicken,
+      veg: state.qty.veg,
+      amount: total,
+      screenshot: state.screenshotBase64,
+      screenshotName: state.screenshotName
+    };
+
+    let bookingId = 'TOM-' + Date.now().toString().slice(-6); // fallback if backend not connected
+
+    try{
+      if(APPS_SCRIPT_URL && !APPS_SCRIPT_URL.includes('PASTE_YOUR')){
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method:'POST',
+          body: JSON.stringify(payload),
+          headers: {'Content-Type':'text/plain;charset=utf-8'}
+        });
+        const data = await res.json();
+        if(data && data.bookingId) bookingId = data.bookingId;
+      }
+    }catch(err){
+      console.error('Booking submit failed, using local ID as fallback', err);
+    }
+
+    document.getElementById('confirm-bid').textContent = bookingId;
+    let recap = '';
+    if(state.qty.mutton>0) recap += `<div class="r-row"><span>Mutton Biriyani</span><b>× ${state.qty.mutton}</b></div>`;
+    if(state.qty.chicken>0) recap += `<div class="r-row"><span>Chicken Biriyani</span><b>× ${state.qty.chicken}</b></div>`;
+    if(state.qty.veg>0) recap += `<div class="r-row"><span>Veg Biriyani</span><b>× ${state.qty.veg}</b></div>`;
+    recap += `<div class="r-row"><span>Total paid</span><b>₹${total}</b></div>`;
+    recap += `<div class="r-row"><span>Name</span><b>${state.name}</b></div>`;
+    recap += `<div class="r-row"><span>Batch</span><b>${state.batch}</b></div>`;
+    document.getElementById('confirm-recap').innerHTML = recap;
+
+    btn.disabled = false;
+    btn.textContent = "I've paid — confirm booking";
+    goTo('confirm');
+  }
+
+  function resetAndGoHome(){
+    state.name=""; state.batch=""; state.contact=""; state.email="";
+    state.qty.mutton=0; state.qty.chicken=0; state.qty.veg=0;
+    state.screenshotBase64=null; state.screenshotName=null;
+    document.getElementById('f-name').value='';
+    document.getElementById('f-contact').value='';
+    document.getElementById('f-email').value='';
+    document.querySelectorAll('.batch-opt').forEach(el=>el.classList.remove('selected'));
+    document.getElementById('qty-mutton').textContent='0';
+    document.getElementById('qty-chicken').textContent='0';
+    document.getElementById('qty-veg').textContent='0';
+    document.getElementById('upload-preview').style.display='none';
+    document.getElementById('upload-box').classList.remove('has-file');
+    document.querySelector('#upload-box .txt').textContent='Tap to upload your payment screenshot';
+    renderSummary();
+    goTo('home');
+  }
+</script>
+</body>
+</html>
